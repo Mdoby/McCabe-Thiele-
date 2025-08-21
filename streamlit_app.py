@@ -34,25 +34,29 @@ def create_equilibrium_curve(alpha: float, n_points: int = 400) -> Tuple[np.ndar
     y_eq = yfxeq_vec(x_eq, alpha)
     return x_eq, y_eq
 
-def plot_mccabe_thiele(result: Dict, xD: float, xB: float, xF: float, q: float, R: float, alpha: float) -> plt.Figure:
+def plot_mccabe_thiele(
+    result: Dict, xD: float, xB: float, xF: float, q: float, R: float, alpha: float,
+    show_numbers: bool = True,
+    show_feed_arrow: bool = True
+) -> plt.Figure:
     fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
 
-    # Equilibrium + y=x
+    # ── Equilibrium + y=x
     x_eq, y_eq = create_equilibrium_curve(alpha)
     ax.plot(x_eq, y_eq, linewidth=2, label="Equilibrium Curve")
     ax.plot([0, 1], [0, 1], linestyle="--", alpha=0.6, label="y = x")
 
-    # Operating lines via your functions
+    # ── Operating lines via your functions
     mR, bR = rectifying_line(R, xD)
     qline = q_line(xF, q)
     xstar, ystar = break_point(mR, bR, qline)
     ms, bs = stripping_line(xB, xstar, ystar)
 
-    # Rectifying line
+    # Rectifying line segment (x between x* and xD)
     x_rect = np.linspace(max(0, min(xstar, xD)), min(1, max(xstar, xD)), 200)
     ax.plot(x_rect, mR * x_rect + bR, linewidth=2, label="Rectifying Line")
 
-    # Stripping line
+    # Stripping line segment (x between xB and x*)
     x_strip = np.linspace(max(0, min(xB, xstar)), min(1, max(xB, xstar)), 200)
     ax.plot(x_strip, ms * x_strip + bs, linewidth=2, label="Stripping Line")
 
@@ -68,48 +72,50 @@ def plot_mccabe_thiele(result: Dict, xD: float, xB: float, xF: float, q: float, 
         mask = (y_q >= 0) & (y_q <= 1)
         ax.plot(x_q[mask], y_q[mask], linestyle="--", linewidth=2, label="q-line")
 
-    # ── Stairs (FIXED) ────────────────────────────────────────────────────────
-    # Use a true step plot and explicitly end at (xB, xB)
+    # ── STAIRS (draw first, then we can number / add arrow)
     vertices = result.get("vertices", [])
     if vertices:
         vx = [v[0] for v in vertices]
         vy = [v[1] for v in vertices]
 
-        # Force final point at bottoms if needed (fixes the square-marked issue)
+        # Ensure clean finish at (xB, xB) if last vertex isn't exactly there
         if abs(vx[-1] - xB) > 1e-12 or abs(vy[-1] - xB) > 1e-12:
-            vx.append(xB)
-            vy.append(xB)
+            vx.append(xB); vy.append(xB)
 
-        # Draw proper stairs (horizontal then vertical) — removes diagonal artifacts
         ax.step(vx, vy, where="post", linewidth=1.8, label="Stages")
-        ax.scatter(vx, vy, s=12)  # optional: show corners
-        # ===== Stage numbering: label every vertical step endpoint =====
-        vertices = result.get("vertices", [])
-        stage_counter = int(result.get("stage_counter") or 0)
+        ax.scatter(vx, vy, s=12)
 
-        # Vertical step endpoints are at indices 1, 3, 5, ...
-        stage_vertex_indices = [i for i in range(1, len(vertices), 2)]
+        # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
+        if show_numbers:
+            stage_num = 1
+            for i in range(1, len(vertices)):
+                x_prev, y_prev = vertices[i-1]
+                x_i,   y_i   = vertices[i]
+                # vertical move → x unchanged
+                if abs(x_i - x_prev) < 1e-6:
+                    ax.text(x_i + 0.01, y_i + 0.02, str(stage_num),
+                            fontsize=9, ha="left", va="bottom")
+                    stage_num += 1
 
-        for s, idx in enumerate(stage_vertex_indices, start=1):
-            xx, yy = vertices[idx]
-            ax.text(xx + 0.008, yy + 0.008, str(s),
-                    fontsize=15, ha="left", va="bottom",
-                    alpha=0.95, zorder=6)
+        # ---------- Feed stage arrow ----------
+        if show_feed_arrow:
+            feed_idx = result.get("feed_stage_index", -1)  # 0-based stage index
+            if isinstance(feed_idx, int) and feed_idx >= 0:
+                # vertical endpoint vertex for stage S is 2*(S) in 1-based,
+                # so for 0-based feed_idx → vertex index = 2*(feed_idx+1)
+                feed_vertex_idx = 2 * (feed_idx + 1)
+                if 0 <= feed_vertex_idx < len(vertices):
+                    fx, fy = vertices[feed_vertex_idx]
+                    ax.annotate(
+                        f"Feed stage = {feed_idx+1}",
+                        xy=(fx, fy), xytext=(fx + 0.08, fy + 0.05),
+                        arrowprops=dict(arrowstyle="->", lw=1.5, color="red"),
+                        fontsize=10, color="red", weight="bold"
+                    )
 
-    # Points
-    ax.plot([xD], [xD], "o", label=f"Distillate (xD={xD:.3f})")
-    ax.plot([xB], [xB], "o", label=f"Bottoms (xB={xB:.3f})")
-    ax.plot([xF], [xF], "o", label=f"Feed (xF={xF:.3f})")
-    ax.plot([xstar], [ystar], "o", label=f"Break Point ({xstar:.3f}, {ystar:.3f})")
-
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.set_xlabel("x (liquid mole fraction of light key)")
-    ax.set_ylabel("y (vapor mole fraction of light key)")
-    ax.grid(True, alpha=0.3)
-    ax.legend(loc="lower right", fontsize=8)
-    fig.tight_layout()
-    
+    # ── Points & styling
+    ax.plot([xD],   [xD],   "o", label=f"Distillate (xD={xD:.3f})")
+    ax
 
     return fig
 
@@ -120,6 +126,9 @@ def main():
     st.set_page_config(page_title="McCabe–Thiele Distillation Simulator", page_icon="🧪", layout="wide")
     st.title("🧪 McCabe–Thiele Distillation Column Simulator ")
 
+# ── Display options
+    show_numbers = st.sidebar.checkbox("Show stage numbers", value=True)
+    show_feed_arrow = st.sidebar.checkbox("Show feed arrow", value=True)
 
     # Sidebar inputs — typed values
     st.sidebar.header("📊 Input Parameters")
@@ -152,7 +161,11 @@ def main():
                     xD=xD, xB=xB, xF=xF, q=q, R=R, alpha=alpha,
                     max_iterations=int(max_iterations), tolerance=float(tolerance), N_max=N_max
                 )
-            fig = plot_mccabe_thiele(result, xD, xB, xF, q, R, alpha)
+            fig = plot_mccabe_thiele(
+                result, xD, xB, xF, q, R, alpha,
+                show_numbers=show_numbers,
+                show_feed_arrow=show_feed_arrow
+            )
             st.pyplot(fig)
         except Exception as e:
             st.error(f"❌ Simulation failed: {e}")
