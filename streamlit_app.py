@@ -74,20 +74,20 @@ def plot_mccabe_thiele(
 
     # ── STAIRS (draw first, then we can number / add arrow)
     vertices = result.get("vertices", [])
-    if show_numbers:
-        if vertices:
-            vx = [v[0] for v in vertices]
-            vy = [v[1] for v in vertices]
+    if vertices:
+        vx = [v[0] for v in vertices]
+        vy = [v[1] for v in vertices]
 
-            # Ensure clean finish at (xB, xB) if last vertex isn't exactly there
-            if abs(vx[-1] - xB) > 1e-12 or abs(vy[-1] - xB) > 1e-12:
-                vx.append(xB); vy.append(xB)
+        # Ensure clean finish at (xB, xB) if last vertex isn't exactly there
+        if abs(vx[-1] - xB) > 1e-12 or abs(vy[-1] - xB) > 1e-12:
+            vx.append(xB); vy.append(xB)
 
-            ax.step(vx, vy, where="post", linewidth=1.8, label="Stages")
-            ax.scatter(vx, vy, s=12)
+        ax.step(vx, vy, where="post", linewidth=1.8, label="Stages")
+        ax.scatter(vx, vy, s=12)
 
             # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
         # Use a true step plot and explicitly end at (xB, xB)
+    if show_numbers:    
         vertices = result.get("vertices", [])
         if vertices:
             vx = [v[0] for v in vertices]
