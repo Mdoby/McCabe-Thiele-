@@ -1,0 +1,13 @@
+# === Minimal setup (good for binary/multicomponent with thermo props) ===
+numpy
+scipy
+pandas
+matplotlib
+thermo
+chemicals
+streamlit
+# === Full setup (for rigorous optimization/dynamic modeling) ===
+coolprop
+pyomo
+gekko
+casadi
