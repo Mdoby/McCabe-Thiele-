@@ -238,16 +238,15 @@ def main():
 
     with tab3:
         st.header("McCabe–Thiele Method (Quick Notes)")
-        st.markdown(
-            """
-1) **Assumptions**: CMO, total condenser, constant α.  
-2) **Operating lines**:  
-   - Rectifying: \(y = \frac{R}{R+1} x + \frac{x_D}{R+1}\)  
-   - Stripping: through (x*, y*) and (x_B, x_B).  
-3) **Stepping**: horizontal to equilibrium, vertical to operating line.  
-4) **Termination**: when \(x \to x_B\) or guard criteria hit.
-"""
-        )
+        st.markdown("""
+    **Key Points:**
+    1. **Assumptions**: Constant molar overflow (CMO), total condenser, constant relative volatility
+    2. **Operating lines**:  
+    - Rectifying: y = R/(R+1) × x + x_D/(R+1)  
+    - Stripping: passes through (x*, y*) and (x_B, x_B)
+    3. **Stepping procedure**: horizontal to equilibrium curve, vertical to operating line  
+    4. **Termination**: when x approaches x_B or maximum iterations reached
+            """)
 
 if __name__ == "__main__":
     main()
