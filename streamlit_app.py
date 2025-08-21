@@ -118,7 +118,7 @@ def plot_mccabe_thiele(result: Dict, xD: float, xB: float, xF: float, q: float, 
 # ──────────────────────────────────────────────────────────────────────────────
 def main():
     st.set_page_config(page_title="McCabe–Thiele Distillation Simulator", page_icon="🧪", layout="wide")
-    st.title("🧪 McCabe–Thiele Distillation Column Simulator (typed inputs)")
+    st.title("🧪 McCabe–Thiele Distillation Column Simulator ")
 
 
     # Sidebar inputs — typed values
@@ -187,7 +187,7 @@ def main():
             st.write(f"- q-line: **y = {xF:.6f}** (horizontal; q=0)")
         else:
             st.write(f"- q-line: **y = {qline['mq']:.6f} x + {qline['bq']:.6f}**")
-        st.write(f"- Break point: **(x*, y*) = ({xstar:.6f}, {ystar:.6f})**")
+        st.write(f"- Break point: **(x*, y*)** = **({xstar:.6f}, {ystar:.6f})**")
 
     st.markdown("---")
     st.header("📊 Detailed Results")
