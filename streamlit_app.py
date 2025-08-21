@@ -187,9 +187,8 @@ def main():
             st.write(f"- q-line: **y = {xF:.6f}** (horizontal; q=0)")
         else:
             st.write(f"- q-line: **y = {qline['mq']:.6f} x + {qline['bq']:.6f}**")
-            xstarre="x*"
-            ystarre="y*"
-        st.write(f"- Break point: **( {xstarre}, {ystarre} )** = **({xstar:.6f}, {ystar:.6f})**")
+            
+        st.write(f"- Break point: **( x, y )** = **({xstar:.6f}, {ystar:.6f})**")
 
     st.markdown("---")
     st.header("📊 Detailed Results")
