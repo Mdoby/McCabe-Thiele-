@@ -86,16 +86,32 @@ def plot_mccabe_thiele(
         ax.scatter(vx, vy, s=12)
 
         # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
-        if show_numbers:
-            stage_num = 1
-            for i in range(1, len(vertices)):
-                x_prev, y_prev = vertices[i-1]
-                x_i,   y_i   = vertices[i]
-                # vertical move → x unchanged
-                if abs(x_i - x_prev) < 1e-6:
-                    ax.text(x_i + 0.01, y_i + 0.02, str(stage_num),
-                            fontsize=9, ha="left", va="top")
-                    stage_num += 1
+    # Use a true step plot and explicitly end at (xB, xB)
+    vertices = result.get("vertices", [])
+    if vertices:
+        vx = [v[0] for v in vertices]
+        vy = [v[1] for v in vertices]
+
+        # Force final point at bottoms if needed (fixes the square-marked issue)
+        if abs(vx[-1] - xB) > 1e-12 or abs(vy[-1] - xB) > 1e-12:
+            vx.append(xB)
+            vy.append(xB)
+
+        # Draw proper stairs (horizontal then vertical) — removes diagonal artifacts
+        ax.step(vx, vy, where="post", linewidth=1.8, label="Stages")
+        ax.scatter(vx, vy, s=12)  # optional: show corners
+        # ===== Stage numbering: label every vertical step endpoint =====
+        vertices = result.get("vertices", [])
+        stage_counter = int(result.get("stage_counter") or 0)
+
+        # Vertical step endpoints are at indices 1, 3, 5, ...
+        stage_vertex_indices = [i for i in range(1, len(vertices), 2)]
+
+        for s, idx in enumerate(stage_vertex_indices, start=1):
+            xx, yy = vertices[idx]
+            ax.text(xx + 0.008, yy + 0.008, str(s),
+                    fontsize=15, ha="left", va="bottom",
+                    alpha=0.95, zorder=6)
 
         # ---------- Feed stage arrow ----------
         if show_feed_arrow:
