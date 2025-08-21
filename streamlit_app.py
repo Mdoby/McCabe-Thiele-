@@ -94,7 +94,7 @@ def plot_mccabe_thiele(
                 # vertical move → x unchanged
                 if abs(x_i - x_prev) < 1e-6:
                     ax.text(x_i + 0.01, y_i + 0.02, str(stage_num),
-                            fontsize=9, ha="left", va="bottom")
+                            fontsize=9, ha="left", va="top")
                     stage_num += 1
 
         # ---------- Feed stage arrow ----------
@@ -103,11 +103,11 @@ def plot_mccabe_thiele(
             if isinstance(feed_idx, int) and feed_idx >= 0:
                 # vertical endpoint vertex for stage S is 2*(S) in 1-based,
                 # so for 0-based feed_idx → vertex index = 2*(feed_idx+1)
-                feed_vertex_idx = 2 * (feed_idx + 1)
+                feed_vertex_idx = 2 * (feed_idx )
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     ax.annotate(
-                        f"Feed stage = {feed_idx+1}",
+                        f"Feed stage = {feed_idx}",
                         xy=(fx, fy), xytext=(fx + 0.08, fy + 0.05),
                         arrowprops=dict(arrowstyle="->", lw=1.5, color="red"),
                         fontsize=10, color="red", weight="bold"
