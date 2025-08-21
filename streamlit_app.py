@@ -95,19 +95,6 @@ def plot_mccabe_thiele(result: Dict, xD: float, xB: float, xF: float, q: float, 
             ax.text(xx + 0.008, yy + 0.008, str(s),
                     fontsize=15, ha="left", va="bottom",
                     alpha=0.95, zorder=6)
-        # ===== Feed arrow: point to the vertical endpoint of the feed stage =====
-        feed_idx = result.get("feed_stage_index", -1)  # 0-based, from stair_stepper :contentReference[oaicite:2]{index=2}
-        if isinstance(feed_idx, int) and feed_idx >= 0:
-            feed_vertex_idx = 2 * (feed_idx )       # stage numbers are 1..N → vertex 2*(s)
-            if feed_vertex_idx < len(vertices):
-                fx, fy = vertices[feed_vertex_idx]
-                ax.annotate(
-                    "Feed stage",
-                    xy=(fx, fy),
-                    xytext=(fx + 0.06, fy + 0.05),
-                    arrowprops=dict(arrowstyle="->", lw=1.2),
-                    fontsize=9, zorder=7
-                )
 
     # Points
     ax.plot([xD], [xD], "o", label=f"Distillate (xD={xD:.3f})")
@@ -123,8 +110,7 @@ def plot_mccabe_thiele(result: Dict, xD: float, xB: float, xF: float, q: float, 
     ax.legend(loc="lower right", fontsize=8)
     fig.tight_layout()
     
-    ax.annotate("Feed Stage {feed_stage_index}", xy=(xstar,ystar), xytext=(0.2, 0.8),
-            arrowprops=dict(arrowstyle="->", color='blue', lw=2))
+
     return fig
 
 # ──────────────────────────────────────────────────────────────────────────────
