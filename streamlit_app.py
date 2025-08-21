@@ -133,8 +133,7 @@ def plot_mccabe_thiele(result: Dict, xD: float, xB: float, xF: float, q: float, 
 def main():
     st.set_page_config(page_title="McCabe–Thiele Distillation Simulator", page_icon="🧪", layout="wide")
     st.title("🧪 McCabe–Thiele Distillation Column Simulator (typed inputs)")
-    st.caption(f"Running script: {__file__}")
-    st.caption("Uses your existing algorithms from mccabe.py and thermo_simple.py without modification.")
+
 
     # Sidebar inputs — typed values
     st.sidebar.header("📊 Input Parameters")
