@@ -28,7 +28,7 @@ def create_equilibrium_curve(alpha: float, n_points: int = 400) -> Tuple[np.ndar
     x_eq = np.linspace(0.0, 1.0, n_points)
     y_eq = yfxeq_vec(x_eq, alpha)
     return x_eq, y_eq
-def plot_mccabe_thiele(
+
 def plot_mccabe_thiele(
     result: Dict, xD: float, xB: float, xF: float, q: float, R: float, alpha: float,
     show_numbers: bool = True,
