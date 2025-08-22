@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
-import plotly as go
+import plotly.graph_objects as go
 from mccabe import stair_stepper, rectifying_line, q_line, break_point, stripping_line
 from thermo_simple import yfxeq, xfyeq
 
