@@ -153,13 +153,13 @@ def plot_mccabe_thiele(
         if show_feed_arrow:
             feed_idx = result.get("feed_stage_index", -1)
             if isinstance(feed_idx, int) and feed_idx >= 0:
-                feed_vertex_idx = 2 * (feed_idx +1)
+                feed_vertex_idx = 2 * (feed_idx )
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
                         x=fx, y=fy, 
                         ax=fx + 0.12, ay=fy + 0.08,
-                        text=f"<b>Feed Stage {feed_idx +1}</b>",
+                        text=f"<b>Feed Stage {feed_idx}</b>",
                         showarrow=True, 
                         arrowhead=3, 
                         arrowsize=1.5, 
