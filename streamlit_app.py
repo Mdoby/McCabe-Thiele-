@@ -64,7 +64,7 @@ def main():
                 show_numbers=show_numbers,
                 show_feed_arrow=show_feed_arrow
             )
-            st.pyplot(fig)
+            st.plotly_chart(fig, use_container_width=True)
         except Exception as e:
             st.error(f"❌ Simulation failed: {e}")
             st.stop()
