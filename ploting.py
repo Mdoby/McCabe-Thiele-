@@ -33,6 +33,16 @@ def plot_mccabe_thiele(
     show_numbers: bool = True,
     show_feed_arrow: bool = True
 ) -> "go.Figure":
+    
+    colors = {
+        'equilibrium': '#2E86AB',
+        'diagonal': '#A23B72', 
+        'rectifying': '#F18F01',
+        'stripping': '#C73E1D',
+        'qline': '#592E83',
+        'stages': '#4CAF50',
+        'feed_point': '#FF6B6B'
+    }
     # ── Equilibrium + y=x
     x_eq, y_eq = create_equilibrium_curve(alpha)
 
@@ -136,49 +146,97 @@ def plot_mccabe_thiele(
                     ))
                     stage_num += 1
 
-        # ---------- Feed stage arrow ----------
+        # Enhanced feed stage arrow
         if show_feed_arrow:
-            feed_idx = result.get("feed_stage_index", -1)  # 0-based stage index
+            feed_idx = result.get("feed_stage_index", -1)
             if isinstance(feed_idx, int) and feed_idx >= 0:
-                # vertical endpoint vertex for stage S is index 2*(S) in 1-based
                 feed_vertex_idx = 2 * (feed_idx )
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
-                        x=fx, y=fy, ax= fx +0.08 , ay= fy + 0.05,
-                        text=f"Feed stage = {feed_idx}",
-                        showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=2,
-                        arrowcolor="red", font=dict(color="black", size=20)
+                        x=fx, y=fy, 
+                        ax=fx + 0.12, ay=fy + 0.08,
+                        text=f"<b>Feed Stage {feed_idx}</b>",
+                        showarrow=True, 
+                        arrowhead=3, 
+                        arrowsize=1.5, 
+                        arrowwidth=3,
+                        arrowcolor=colors['feed_point'], 
+                        font=dict(color=colors['feed_point'], size=13, family="Arial"),
+                        bgcolor="rgba(255,255,255,0.8)",
+                        bordercolor=colors['feed_point'],
+                        borderwidth=2
                     ))
 
-    # ── Points
-    fig.add_trace(go.Scatter(
-        x=[xD], y=[xD], mode="markers", name=f"Distillate (xD={xD:.3f})",
-        marker=dict(size=9)
-    ))
-    fig.add_trace(go.Scatter(
-        x=[xB], y=[xB], mode="markers", name=f"Bottoms (xB={xB:.3f})",
-        marker=dict(size=9)
-    ))
-    fig.add_trace(go.Scatter(
-        x=[xF], y=[xF], mode="markers", name=f"Feed (xF={xF:.3f})",
-        marker=dict(size=9)
-    ))
-    fig.add_trace(go.Scatter(
-        x=[xstar], y=[ystar], mode="markers", name=f"Break Point ({xstar:.3f}, {ystar:.3f})",
-        marker=dict(size=9)
-    ))
-
-    # Layout
+    points_data = [
+        (xD, xD, f"Distillate<br>xD = {xD:.4f}", "diamond", "#FF6B6B"),
+        (xB, xB, f"Bottoms<br>xB = {xB:.4f}", "diamond", "#4ECDC4"),
+        (xF, xF, f"Feed<br>xF = {xF:.4f}", "star", colors['feed_point']),
+        (xstar, ystar, f"Break Point<br>({xstar:.4f}, {ystar:.4f})", "x", "#9B59B6")
+    ]
+    
+    for x, y, name, symbol, color in points_data:
+        fig.add_trace(go.Scatter(
+            x=[x], y=[y], 
+            mode="markers", 
+            name=name.replace('<br>', ' '),
+            marker=dict(size=12, color=color, symbol=symbol, line=dict(width=2, color="white")),
+            hovertemplate=f"<b>{name}</b><extra></extra>"
+        ))
+    
+    # Enhanced layout with better styling
     fig.update_layout(
-        width=950, height=700,
-        xaxis=dict(range=[0, 1], title="x (liquid mole fraction of light key)"),
-        yaxis=dict(range=[0, 1], title="y (vapor mole fraction of light key)"),
-        legend=dict(x=0.02, y=0.02, xanchor="right", yanchor="bottom", bgcolor="rgba(255,255,255,0.6)"),
-        margin=dict(l=40, r=20, t=40, b=40),
+        template=theme,
+        width=1000, height=750,
+        title=dict(
+            text="<b>McCabe-Thiele Distillation Column Design</b>",
+            x=0.5,
+            font=dict(size=18, family="Arial")
+        ),
+        xaxis=dict(
+            range=[0, 1], 
+            title=dict(text="<b>x (liquid mole fraction of light component)</b>", font=dict(size=14)),
+            showgrid=True, 
+            gridwidth=1, 
+            gridcolor="rgba(128,128,128,0.3)",
+            zeroline=True, 
+            zerolinewidth=2, 
+            zerolinecolor="rgba(0,0,0,0.5)"
+        ),
+        yaxis=dict(
+            range=[0, 1], 
+            title=dict(text="<b>y (vapor mole fraction of light component)</b>", font=dict(size=14)),
+            showgrid=True, 
+            gridwidth=1, 
+            gridcolor="rgba(128,128,128,0.3)",
+            zeroline=True, 
+            zerolinewidth=2, 
+            zerolinecolor="rgba(0,0,0,0.5)"
+        ),
+        legend=dict(
+            x=0.02, y=0.02, 
+            xanchor="left", yanchor="bottom", 
+            bgcolor="rgba(255,255,255,0.9)",
+            bordercolor="rgba(0,0,0,0.3)",
+            borderwidth=1,
+            font=dict(size=12)
+        ),
+        margin=dict(l=60, r=40, t=60, b=60),
         annotations=annotations,
+        hovermode='closest',
+        plot_bgcolor='rgba(0,0,0,0)',
     )
-    fig.update_xaxes(showgrid=True, gridcolor="rgba(0,0,0,0.2)")
-    fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.2)")
+    
+    # Add efficiency information as subtitle
+    total_stages = result.get("stage_counter", 0) + 1
+    theoretical_min = f"Theoretical stages: {total_stages}"
+    fig.add_annotation(
+        text=f"<i>{theoretical_min} | α = {alpha:.2f} | R = {R:.2f}</i>",
+        xref="paper", yref="paper",
+        x=0.5, y=-0.12,
+        showarrow=False,
+        font=dict(size=12, color="gray"),
+        xanchor="center"
+    )
 
     return fig
