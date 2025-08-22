@@ -158,7 +158,7 @@ def plot_mccabe_thiele(
             annotations.append(dict(
                 x=xB + 0.01, y=xB + 0.03,
                 text=str(total_stages), showarrow=False,
-                font=dict(size=16, color="red"), xanchor="left", yanchor="bottom"  # Red to distinguish
+                font=dict(size=16, color="black"), xanchor="left", yanchor="bottom"  
             ))
 
         # Enhanced feed stage arrow
