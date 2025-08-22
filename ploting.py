@@ -145,7 +145,7 @@ def plot_mccabe_thiele(
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
-                        x=fx, y=fy, ax=fx + 0.2, ay=fy + 0.1,
+                        x=fx, y=fy, ax=fx + 2, ay=fy + 0.1,
                         text=f"Feed stage = {feed_idx}",
                         showarrow=True, arrowhead=2, arrowsize=4, arrowwidth=2,
                         arrowcolor="red", font=dict(color="black", size=20)
