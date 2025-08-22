@@ -137,7 +137,7 @@ def plot_mccabe_thiele(
         # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
         if show_numbers:
             stage_num = 1
-            for i in range(1, len(vertices)+1):
+            for i in range(1, len(vertices)x):
                 x_prev, y_prev = vertices[i-1]
                 x_i,   y_i     = vertices[i]
                 # vertical move → x unchanged
