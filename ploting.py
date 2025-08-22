@@ -34,6 +34,9 @@ def plot_mccabe_thiele(
     show_feed_arrow: bool = True
 ) -> "go.Figure":
     
+    theme: str = "plotly_dark"  # or "plotly_dark", "simple_white"
+
+    
     colors = {
         'equilibrium': '#2E86AB',
         'diagonal': '#A23B72', 
