@@ -146,7 +146,7 @@ def plot_mccabe_thiele(
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
                         x=fx, y=fy, ax=fx + 0.08, ay=fy + 0.05,
-                        text=f"Feed stage = {feed_idx+1}",
+                        text=f"Feed stage = {feed_idx}",
                         showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=2,
                         arrowcolor="red", font=dict(color="red", size=12)
                     ))
@@ -174,7 +174,7 @@ def plot_mccabe_thiele(
         width=950, height=700,
         xaxis=dict(range=[0, 1], title="x (liquid mole fraction of light key)"),
         yaxis=dict(range=[0, 1], title="y (vapor mole fraction of light key)"),
-        legend=dict(x=0.02, y=0.02, xanchor="left", yanchor="bottom", bgcolor="rgba(255,255,255,0.6)"),
+        legend=dict(x=0.02, y=0.02, xanchor="right", yanchor="bottom", bgcolor="rgba(255,255,255,0.6)"),
         margin=dict(l=40, r=20, t=40, b=40),
         annotations=annotations,
     )
