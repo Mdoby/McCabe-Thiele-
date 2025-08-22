@@ -130,7 +130,7 @@ def plot_mccabe_thiele(
                 # vertical move → x unchanged
                 if abs(x_i - x_prev) < 1e-6:
                     annotations.append(dict(
-                        x=x_i + 0.01, y=y_i + 0.03,
+                        x=x_i + 0.01, y=y_i + 0.05,
                         text=str(stage_num), showarrow=False,
                         font=dict(size=16, color="black"), xanchor="left", yanchor="bottom"
                     ))
