@@ -28,97 +28,70 @@ def create_equilibrium_curve(alpha: float, n_points: int = 400) -> Tuple[np.ndar
     x_eq = np.linspace(0.0, 1.0, n_points)
     y_eq = yfxeq_vec(x_eq, alpha)
     return x_eq, y_eq
-
 def plot_mccabe_thiele(
     result: Dict, xD: float, xB: float, xF: float, q: float, R: float, alpha: float,
     show_numbers: bool = True,
-    show_feed_arrow: bool = True,
-    theme: str = "plotly_white"  # or "plotly_dark", "simple_white"
+    show_feed_arrow: bool = True
 ) -> "go.Figure":
-    """Enhanced McCabe-Thiele diagram with better styling and interactivity"""
-    
-    # Color scheme
-    colors = {
-        'equilibrium': '#2E86AB',
-        'diagonal': '#A23B72', 
-        'rectifying': '#F18F01',
-        'stripping': '#C73E1D',
-        'qline': '#592E83',
-        'stages': '#4CAF50',
-        'feed_point': '#FF6B6B'
-    }
-    
     # ── Equilibrium + y=x
     x_eq, y_eq = create_equilibrium_curve(alpha)
-    
+
     fig = go.Figure()
-    
-    # Equilibrium curve with enhanced styling
+
+    # Equilibrium curve
     fig.add_trace(go.Scatter(
-        x=x_eq, y=y_eq, 
-        mode="lines", 
-        name="Equilibrium Curve", 
-        line=dict(width=3, color=colors['equilibrium']),
-        hovertemplate="<b>Equilibrium</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>"
+        x=x_eq, y=y_eq, mode="lines", name="Equilibrium Curve", line=dict(width=2)
     ))
-    
-    # Diagonal y=x with enhanced styling
+
+    # Diagonal y=x
     fig.add_trace(go.Scatter(
-        x=[0, 1], y=[0, 1], 
-        mode="lines", 
-        name="y = x",
-        line=dict(width=2, dash="dash", color=colors['diagonal']),
-        hovertemplate="<b>45° Line</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>"
+        x=[0, 1], y=[0, 1], mode="lines", name="y = x",
+        line=dict(width=2, dash="dash")
     ))
-    
+
     # ── Operating lines via your functions
     mR, bR = rectifying_line(R, xD)
     qline = q_line(xF, q)
     xstar, ystar = break_point(mR, bR, qline)
     ms, bs = stripping_line(xB, xstar, ystar)
-    
-    # Rectifying line with enhanced styling
+
+    # Rectifying line segment (x between x* and xD)
     x_rect = np.linspace(max(0, min(xstar, xD)), min(1, max(xstar, xD)), 200)
     y_rect = mR * x_rect + bR
     fig.add_trace(go.Scatter(
-        x=x_rect, y=y_rect, 
-        mode="lines", 
-        name=f"Rectifying Line (R={R:.2f})", 
-        line=dict(width=3, color=colors['rectifying']),
-        hovertemplate="<b>Rectifying Line</b><br>x: %{x:.4f}<br>y: %{y:.4f}<br>Slope: " + f"{mR:.4f}<extra></extra>"
+        x=x_rect, y=y_rect, mode="lines", name="Rectifying Line", line=dict(width=2)
     ))
-    
-    # Stripping line with enhanced styling
+
+    # Stripping line segment (x between xB and x*)
     x_strip = np.linspace(max(0, min(xB, xstar)), min(1, max(xB, xstar)), 200)
     y_strip = ms * x_strip + bs
     fig.add_trace(go.Scatter(
-        x=x_strip, y=y_strip, 
-        mode="lines", 
-        name="Stripping Line", 
-        line=dict(width=3, color=colors['stripping']),
-        hovertemplate="<b>Stripping Line</b><br>x: %{x:.4f}<br>y: %{y:.4f}<br>Slope: " + f"{ms:.4f}<extra></extra>"
+        x=x_strip, y=y_strip, mode="lines", name="Stripping Line", line=dict(width=2)
     ))
-    
-    # Enhanced q-line handling
+
+    # q-line
     if qline.get("vertical", False):
+        # vertical shape x = xF
         fig.add_shape(
             type="line", x0=xF, x1=xF, y0=0, y1=1,
-            line=dict(width=3, dash="dash", color=colors['qline']),
+            line=dict(width=2, dash="dash"),
+            name="q-line (vertical)"
         )
+        # Add a dummy legend entry for visibility
         fig.add_trace(go.Scatter(
-            x=[None], y=[None], mode="lines", 
-            name=f"q-line (q={q:.2f}, vertical)",
-            line=dict(width=3, dash="dash", color=colors['qline'])
+            x=[None], y=[None], mode="lines", name="q-line (vertical)",
+            line=dict(width=2, dash="dash")
         ))
     elif qline.get("horizontal", False):
+        # horizontal shape y = xF
         fig.add_shape(
             type="line", x0=0, x1=1, y0=xF, y1=xF,
-            line=dict(width=3, dash="dash", color=colors['qline']),
+            line=dict(width=2, dash="dash"),
+            name="q-line (horizontal)"
         )
         fig.add_trace(go.Scatter(
-            x=[None], y=[None], mode="lines", 
-            name=f"q-line (q={q:.2f}, horizontal)",
-            line=dict(width=3, dash="dash", color=colors['qline'])
+            x=[None], y=[None], mode="lines", name="q-line (horizontal)",
+            line=dict(width=2, dash="dash")
         ))
     else:
         mq, bq = qline["mq"], qline["bq"]
@@ -126,149 +99,86 @@ def plot_mccabe_thiele(
         y_q = mq * x_q + bq
         mask = (y_q >= 0) & (y_q <= 1)
         fig.add_trace(go.Scatter(
-            x=x_q[mask], y=y_q[mask], 
-            mode="lines", 
-            name=f"q-line (q={q:.2f})", 
-            line=dict(width=3, dash="dash", color=colors['qline']),
-            hovertemplate="<b>q-line</b><br>x: %{x:.4f}<br>y: %{y:.4f}<br>Slope: " + f"{mq:.4f}<extra></extra>"
+            x=x_q[mask], y=y_q[mask], mode="lines", name="q-line", line=dict(width=2, dash="dash")
         ))
-    
-    # ── ENHANCED STAIRS with better visualization
+
+    # ── STAIRS
     vertices = result.get("vertices", [])
     annotations = []
-    
+
     if vertices:
         vx = [v[0] for v in vertices]
         vy = [v[1] for v in vertices]
-        
-        # Ensure clean finish at (xB, xB)
+
+        # Ensure clean finish at (xB, xB) if last vertex isn't exactly there
         if abs(vx[-1] - xB) > 1e-12 or abs(vy[-1] - xB) > 1e-12:
             vx.append(xB); vy.append(xB)
-        
-        # Enhanced stairs with better styling
+
+        # Plotly can draw HV stairs with line_shape="hv"
         fig.add_trace(go.Scatter(
-            x=vx, y=vy, 
-            mode="lines+markers", 
-            name=f"Stages (Total: {result.get('stage_counter', 0) + 1})",
-            line=dict(width=2.5, color=colors['stages']), 
-            marker=dict(size=8, color=colors['stages'], symbol='circle'),
-            line_shape="hv",
-            hovertemplate="<b>Stage Point</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>"
+            x=vx, y=vy, mode="lines+markers", name="Stages",
+            line=dict(width=2), marker=dict(size=6),
+            line_shape="hv"
         ))
-        
-        # Enhanced stage numbering
+
+        # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
         if show_numbers:
             stage_num = 1
             for i in range(1, len(vertices)):
                 x_prev, y_prev = vertices[i-1]
-                x_i, y_i = vertices[i]
+                x_i,   y_i     = vertices[i]
                 # vertical move → x unchanged
                 if abs(x_i - x_prev) < 1e-6:
                     annotations.append(dict(
-                        x=x_i + 0.015, y=y_i + 0.02,
-                        text=f"<b>{stage_num}</b>", 
-                        showarrow=False,
-                        font=dict(size=14, color="white", family="Arial Black"), 
-                        bgcolor=colors['stages'],
-                        bordercolor="white",
-                        borderwidth=1,
-                        borderpad=4,
-                        xanchor="left", yanchor="bottom"
+                        x=x_i + 0.01, y=y_i + 0.03,
+                        text=str(stage_num), showarrow=False,
+                        font=dict(size=16, color="black"), xanchor="left", yanchor="bottom"
                     ))
                     stage_num += 1
-        
-        # Enhanced feed stage arrow
+
+        # ---------- Feed stage arrow ----------
         if show_feed_arrow:
-            feed_idx = result.get("feed_stage_index", -1)
+            feed_idx = result.get("feed_stage_index", -1)  # 0-based stage index
             if isinstance(feed_idx, int) and feed_idx >= 0:
-                feed_vertex_idx = 2 * (feed_idx + 1)
+                # vertical endpoint vertex for stage S is index 2*(S) in 1-based
+                feed_vertex_idx = 2 * (feed_idx )
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
-                        x=fx, y=fy, 
-                        ax=fx + 0.12, ay=fy + 0.08,
-                        text=f"<b>Feed Stage {feed_idx+1}</b>",
-                        showarrow=True, 
-                        arrowhead=3, 
-                        arrowsize=1.5, 
-                        arrowwidth=3,
-                        arrowcolor=colors['feed_point'], 
-                        font=dict(color=colors['feed_point'], size=13, family="Arial"),
-                        bgcolor="rgba(255,255,255,0.8)",
-                        bordercolor=colors['feed_point'],
-                        borderwidth=2
+                        x=fx, y=fy, ax= fx +0.08 , ay= fy + 0.05,
+                        text=f"Feed stage = {feed_idx}",
+                        showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=2,
+                        arrowcolor="red", font=dict(color="black", size=20)
                     ))
-    
-    # Enhanced key points with better styling
-    points_data = [
-        (xD, xD, f"Distillate<br>xD = {xD:.4f}", "diamond", "#FF6B6B"),
-        (xB, xB, f"Bottoms<br>xB = {xB:.4f}", "diamond", "#4ECDC4"),
-        (xF, xF, f"Feed<br>xF = {xF:.4f}", "star", colors['feed_point']),
-        (xstar, ystar, f"Break Point<br>({xstar:.4f}, {ystar:.4f})", "x", "#9B59B6")
-    ]
-    
-    for x, y, name, symbol, color in points_data:
-        fig.add_trace(go.Scatter(
-            x=[x], y=[y], 
-            mode="markers", 
-            name=name.replace('<br>', ' '),
-            marker=dict(size=12, color=color, symbol=symbol, line=dict(width=2, color="white")),
-            hovertemplate=f"<b>{name}</b><extra></extra>"
-        ))
-    
-    # Enhanced layout with better styling
+
+    # ── Points
+    fig.add_trace(go.Scatter(
+        x=[xD], y=[xD], mode="markers", name=f"Distillate (xD={xD:.3f})",
+        marker=dict(size=9)
+    ))
+    fig.add_trace(go.Scatter(
+        x=[xB], y=[xB], mode="markers", name=f"Bottoms (xB={xB:.3f})",
+        marker=dict(size=9)
+    ))
+    fig.add_trace(go.Scatter(
+        x=[xF], y=[xF], mode="markers", name=f"Feed (xF={xF:.3f})",
+        marker=dict(size=9)
+    ))
+    fig.add_trace(go.Scatter(
+        x=[xstar], y=[ystar], mode="markers", name=f"Break Point ({xstar:.3f}, {ystar:.3f})",
+        marker=dict(size=9)
+    ))
+
+    # Layout
     fig.update_layout(
-        template=theme,
-        width=1000, height=750,
-        title=dict(
-            text="<b>McCabe-Thiele Distillation Column Design</b>",
-            x=0.5,
-            font=dict(size=18, family="Arial")
-        ),
-        xaxis=dict(
-            range=[0, 1], 
-            title=dict(text="<b>x (liquid mole fraction of light component)</b>", font=dict(size=14)),
-            showgrid=True, 
-            gridwidth=1, 
-            gridcolor="rgba(128,128,128,0.3)",
-            zeroline=True, 
-            zerolinewidth=2, 
-            zerolinecolor="rgba(0,0,0,0.5)"
-        ),
-        yaxis=dict(
-            range=[0, 1], 
-            title=dict(text="<b>y (vapor mole fraction of light component)</b>", font=dict(size=14)),
-            showgrid=True, 
-            gridwidth=1, 
-            gridcolor="rgba(128,128,128,0.3)",
-            zeroline=True, 
-            zerolinewidth=2, 
-            zerolinecolor="rgba(0,0,0,0.5)"
-        ),
-        legend=dict(
-            x=0.02, y=0.02, 
-            xanchor="left", yanchor="bottom", 
-            bgcolor="rgba(255,255,255,0.9)",
-            bordercolor="rgba(0,0,0,0.3)",
-            borderwidth=1,
-            font=dict(size=12)
-        ),
-        margin=dict(l=60, r=40, t=60, b=60),
+        width=950, height=700,
+        xaxis=dict(range=[0, 1], title="x (liquid mole fraction of light key)"),
+        yaxis=dict(range=[0, 1], title="y (vapor mole fraction of light key)"),
+        legend=dict(x=0.02, y=0.02, xanchor="right", yanchor="bottom", bgcolor="rgba(255,255,255,0.6)"),
+        margin=dict(l=40, r=20, t=40, b=40),
         annotations=annotations,
-        hovermode='closest',
-        plot_bgcolor='rgba(0,0,0,0)',
     )
-    
-    # Add efficiency information as subtitle
-    total_stages = result.get("stage_counter", 0) + 1
-    theoretical_min = f"Theoretical stages: {total_stages}"
-    fig.add_annotation(
-        text=f"<i>{theoretical_min} | α = {alpha:.2f} | R = {R:.2f}</i>",
-        xref="paper", yref="paper",
-        x=0.5, y=-0.12,
-        showarrow=False,
-        font=dict(size=12, color="gray"),
-        xanchor="center"
-    )
-    
+    fig.update_xaxes(showgrid=True, gridcolor="rgba(0,0,0,0.2)")
+    fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.2)")
+
     return fig
