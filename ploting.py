@@ -141,7 +141,7 @@ def plot_mccabe_thiele(
             feed_idx = result.get("feed_stage_index", -1)  # 0-based stage index
             if isinstance(feed_idx, int) and feed_idx >= 0:
                 # vertical endpoint vertex for stage S is index 2*(S) in 1-based
-                feed_vertex_idx = 2 * (feed_idx + 1)
+                feed_vertex_idx = 2 * (feed_idx )
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
