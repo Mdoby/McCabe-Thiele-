@@ -6,6 +6,7 @@ matplotlib
 thermo
 chemicals
 streamlit
+plotly
 # === Full setup (for rigorous optimization/dynamic modeling) ===
 coolprop
 pyomo
