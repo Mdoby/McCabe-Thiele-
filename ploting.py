@@ -147,8 +147,8 @@ def plot_mccabe_thiele(
                     annotations.append(dict(
                         x=fx, y=fy, ax=fx + 0.08, ay=fy + 0.05,
                         text=f"Feed stage = {feed_idx}",
-                        showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=2,
-                        arrowcolor="red", font=dict(color="red", size=12)
+                        showarrow=True, arrowhead=2, arrowsize=4, arrowwidth=2,
+                        arrowcolor="red", font=dict(color="black", size=20)
                     ))
 
     # ── Points
