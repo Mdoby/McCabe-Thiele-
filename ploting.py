@@ -134,22 +134,32 @@ def plot_mccabe_thiele(
             line_shape="hv"
         ))
 
-        # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
-        if show_numbers:
-            stage_num = 1
-            for i in range(len(vertices)):
-                if i == 0:
-                    continue
-                x_prev, y_prev = vertices[i-1]
-                x_i,   y_i     = vertices[i]
-                # vertical move → x unchanged
-                if abs(x_i - x_prev) < 1e-6:
-                    annotations.append(dict(
-                        x=x_i + 0.01, y=y_i + 0.03,
-                        text=str(stage_num), showarrow=False,
-                        font=dict(size=16, color="black"), xanchor="left", yanchor="bottom"
-                    ))
-                    stage_num += 1
+       # ---------- Stage numbers (ONLY vertical steps = true trays) ----------
+    if show_numbers:
+        total_stages = result.get("stage_counter", 0) + 1  # Get total stages from result
+        stage_num = 1
+        
+        # Number stages based on vertical moves
+        for i in range(1, len(vertices)):
+            x_prev, y_prev = vertices[i-1]
+            x_i, y_i = vertices[i]
+            # vertical move → x unchanged
+            if abs(x_i - x_prev) < 1e-6:
+                annotations.append(dict(
+                    x=x_i + 0.01, y=y_i + 0.03,
+                    text=str(stage_num), showarrow=False,
+                    font=dict(size=16, color="black"), xanchor="left", yanchor="bottom"
+                ))
+                stage_num += 1
+        
+        # FORCE ADD THE FINAL STAGE NUMBER (reboiler)
+        # This ensures we always show the total number of stages
+        if stage_num <= total_stages:
+            annotations.append(dict(
+                x=xB + 0.01, y=xB + 0.03,
+                text=str(total_stages), showarrow=False,
+                font=dict(size=16, color="red"), xanchor="left", yanchor="bottom"  # Red to distinguish
+            ))
 
         # Enhanced feed stage arrow
         if show_feed_arrow:
