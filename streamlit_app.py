@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Import your existing modules (NO algorithm changes)
+# Import your existing modules 
 # ──────────────────────────────────────────────────────────────────────────────
 
 from mccabe import stair_stepper, rectifying_line, q_line, break_point, stripping_line
