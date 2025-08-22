@@ -130,9 +130,9 @@ def plot_mccabe_thiele(
                 # vertical move → x unchanged
                 if abs(x_i - x_prev) < 1e-6:
                     annotations.append(dict(
-                        x=x_i + 0.01, y=y_i + 0.02,
+                        x=x_i + 0.01, y=y_i + 0.03,
                         text=str(stage_num), showarrow=False,
-                        font=dict(size=16, color="black"), xanchor="left", yanchor="top"
+                        font=dict(size=16, color="black"), xanchor="left", yanchor="bottom"
                     ))
                     stage_num += 1
 
@@ -145,9 +145,9 @@ def plot_mccabe_thiele(
                 if 0 <= feed_vertex_idx < len(vertices):
                     fx, fy = vertices[feed_vertex_idx]
                     annotations.append(dict(
-                        x=fx, y=fy, ax= 0.6 , ay= 0.8,
+                        x=fx, y=fy, ax= fx +0.08 , ay= fy + 0.05,
                         text=f"Feed stage = {feed_idx}",
-                        showarrow=True, arrowhead=2, arrowsize=4, arrowwidth=2,
+                        showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=2,
                         arrowcolor="red", font=dict(color="black", size=20)
                     ))
 
