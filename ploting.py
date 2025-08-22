@@ -218,7 +218,7 @@ def plot_mccabe_thiele(
         ),
         legend=dict(
             x=0.02, y=0.02, 
-            xanchor="left", yanchor="bottom", 
+            xanchor="right", yanchor="bottom", 
             bgcolor="rgba(255,255,255,0.9)",
             bordercolor="rgba(0,0,0,0.3)",
             borderwidth=1,
