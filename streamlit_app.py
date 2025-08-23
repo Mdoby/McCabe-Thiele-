@@ -73,7 +73,7 @@ def main():
         st.header("📋 Results Summary")
         st.metric("🔢 Number of Stage:", result.get("stage_counter", "—")+1)
         feed_idx = result.get("feed_stage_index", -1)
-        st.metric("Feed Stage", feed_idx if feed_idx != -1 else "Not determined")
+        st.metric("Feed Stage:", feed_idx if feed_idx != -1 else "Not determined")
 
         message = result.get("message", "No message")
         ml = str(message).lower()
