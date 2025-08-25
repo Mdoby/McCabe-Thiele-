@@ -26,7 +26,7 @@ def main():
 
 # ── Display options
     show_numbers = st.sidebar.checkbox("Show stage numbers", value=True)
-    show_feed_arrow = st.sidebar.checkbox("Show feed arrow", value=True)
+    show_feed_arrow = st.sidebar.checkbox("Show feed stage", value=True)
 
     # Sidebar inputs — typed values
     st.sidebar.header("📊 Input Parameters")
