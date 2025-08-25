@@ -44,7 +44,7 @@ def main():
     st.sidebar.subheader("🔧 Advanced Settings")
     max_iterations = st.sidebar.number_input("Max Iterations", min_value=10, max_value=5000, value=500, step=10)
     tolerance      = st.sidebar.number_input("Tolerance", min_value=1e-15, max_value=1e-6, value=1e-10, step=1e-12, format="%.1e")
-    N_max      = st.sidebar.number_input("Maximum number of stages", min_value=1, max_value=500, value=25, step=1)
+    N_max      = st.sidebar.number_input("Maximum number of stages", min_value=1, max_value=500, value=500, step=1)
     # Validate compositions
     if not (0.0 <= xB < xF < xD <= 1.0):
         st.error("⚠️ Invalid compositions! They must satisfy: 0 ≤ xB < xF < xD ≤ 1.")

@@ -228,9 +228,10 @@ def plot_mccabe_thiele(
             zerolinewidth=2, 
             zerolinecolor="rgba(0,0,0,0.5)"
         ),
+        # Option 2: Right side, bottom
         legend=dict(
-            x=0.02, y=0.02, 
-            xanchor="right", yanchor="bottom", 
+            x=1.02, y=0,
+            xanchor="left", yanchor="bottom", 
             bgcolor="rgba(255,255,255,0.9)",
             bordercolor="rgba(0,0,0,0.3)",
             borderwidth=1,
