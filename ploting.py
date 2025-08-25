@@ -203,11 +203,7 @@ def plot_mccabe_thiele(
     fig.update_layout(
         template=theme,
         width=1000, height=750,
-        title=dict(
-            text="<b>McCabe-Thiele Distillation Column Design</b>",
-            x=0.5,
-            font=dict(size=18, family="Arial")
-        ),
+
         xaxis=dict(
             range=[0, 1], 
             title=dict(text="<b>x (liquid mole fraction of light component)</b>", font=dict(size=14)),
