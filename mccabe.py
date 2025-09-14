@@ -344,7 +344,6 @@ def stair_stepper(xD: float, xB: float, xF: float, q: float, R: float, alpha: fl
     xD = validate_fraction(xD, "xD")
     xB = validate_fraction(xB, "xB")
     xF = validate_fraction(xF, "xF")
-    q = validate_positive(q, "q")
     R = validate_positive(R, "R")
     alpha = validate_positive(alpha, "alpha")
     if not isinstance(q, (float, int)):
